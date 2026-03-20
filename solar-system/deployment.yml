@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: solar-system
+  name: solar-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: solar-system
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: solar-system
+    spec:
+      containers:
+      - image: hashmi111/solar-system:latest
+        name: solar-system
+        imagePullPolicy: Always
+        ports: 
+        - containerPort: 80
