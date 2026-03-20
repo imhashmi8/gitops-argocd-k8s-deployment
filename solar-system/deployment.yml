@@ -16,7 +16,7 @@ spec:
         app: solar-system
     spec:
       containers:
-      - image: hashmi111/solar-system:v6
+      - image: hashmi111/solar-system:v9
         name: solar-system
         imagePullPolicy: Always
         ports: 
