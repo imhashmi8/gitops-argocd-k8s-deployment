@@ -298,9 +298,7 @@ Add the screenshot for the imperative Helm deployment at:
 
 - `images/argocd-helm-imperative-overview.png`
 
-```markdown
 ![Argo CD Helm imperative overview](images/argocd-helm-imperative-overview.png)
-```
 
 ## 13. Declarative Argo CD examples
 
@@ -435,6 +433,4 @@ Add the screenshot for the declarative Helm deployment at:
 
 - `images/argocd-helm-declarative-overview.png`
 
-```markdown
 ![Argo CD Helm declarative overview](images/argocd-helm-declarative-overview.png)
-```
