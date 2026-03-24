@@ -62,6 +62,10 @@ Use:
 - Username: `admin`
 - Password: output from `argocd-initial-admin-secret`
 
+Argo CD applications overview:
+
+![Argo CD applications overview](images/argocd-applications-overview.png)
+
 ## 6. Reset the password
 
 After logging in, open the user info/profile console in the Argo CD UI and reset the admin password.
@@ -180,6 +184,14 @@ Then:
 
 After sync completes, Argo CD shows the application status, health, and Kubernetes resources created from the GitHub repository.
 
+Argo CD application details tree:
+
+![Argo CD application details tree](images/argocd-application-details-tree.png)
+
+Example solar system application UI:
+
+![Solar system application UI](images/solar-system-app-ui.png)
+
 ## 12. Add the GitHub repository and create the application using the Argo CD CLI
 
 After logging in with the Argo CD CLI, add the GitHub repository if needed:
@@ -247,18 +259,93 @@ This configuration means:
 - `--auto-prune`: resources removed from Git are also removed from the cluster
 - `--self-heal`: resources changed manually in the cluster are reconciled back to the Git state
 
-## 13. Screenshots
+## 13. Declarative Argo CD examples
 
-The screenshots are stored in the `images/` folder.
+This repository now shows two declarative Argo CD patterns under `argocd-declarative/`.
 
-### Argo CD applications overview
+### Mono application example
 
-![Argo CD applications overview](images/argocd-applications-overview.png)
+The mono application pattern is the simplest declarative Argo CD setup. One Argo CD `Application` resource manages one workload.
 
-### Argo CD application details tree
+In this repository, the mono example manages a single `nginx` workload in the `nginx-mono` namespace.
 
-![Argo CD application details tree](images/argocd-application-details-tree.png)
+Why this pattern is needed:
 
-### Solar system application UI
+- it is easy to understand and a good starting point for learning Argo CD
+- it works well when you want to deploy one application independently
+- it keeps Git structure simple because one application points directly to one manifest directory
+- it is useful for smaller projects, demos, and teams managing apps one by one
 
-![Solar system application UI](images/solar-system-app-ui.png)
+Structure:
+
+- `argocd-declarative/mono-application/nginx/app/`: Kubernetes manifests for the app
+- `argocd-declarative/mono-application/nginx/application.yml`: Argo CD `Application` manifest
+
+Key files:
+
+- [`argocd-declarative/mono-application/nginx/app/deployment.yml`](argocd-declarative/mono-application/nginx/app/deployment.yml)
+- [`argocd-declarative/mono-application/nginx/app/service.yml`](argocd-declarative/mono-application/nginx/app/service.yml)
+- [`argocd-declarative/mono-application/nginx/application.yml`](argocd-declarative/mono-application/nginx/application.yml)
+
+Apply it with:
+
+```bash
+kubectl apply -f argocd-declarative/mono-application/nginx/application.yml
+```
+
+### Multi-app example
+
+The multi-app example uses the app-of-apps pattern. A parent Argo CD `Application` manages multiple child Argo CD applications.
+
+In this repository, the root application points to child applications for:
+
+- `nginx` in the `nginx-multi` namespace
+- `health-check` in the `health-check-multi` namespace
+
+Why this pattern is needed:
+
+- it helps manage multiple applications from one entry point
+- it is useful for platform teams or environments where many apps must be organized together
+- it makes it easier to group related applications for a cluster, team, or environment
+- it scales better than creating and tracking many standalone applications manually
+- it supports a cleaner GitOps structure when you want central control over child apps
+
+Structure:
+
+- `argocd-declarative/multi-app/apps/`: Kubernetes manifests for each workload
+- `argocd-declarative/multi-app/applications/`: child Argo CD `Application` manifests
+- `argocd-declarative/multi-app/root-application.yml`: parent Argo CD `Application`
+
+Key files:
+
+- [`argocd-declarative/multi-app/applications/nginx.yml`](argocd-declarative/multi-app/applications/nginx.yml)
+- [`argocd-declarative/multi-app/applications/health-check.yml`](argocd-declarative/multi-app/applications/health-check.yml)
+- [`argocd-declarative/multi-app/root-application.yml`](argocd-declarative/multi-app/root-application.yml)
+
+Apply it with:
+
+```bash
+kubectl apply -f argocd-declarative/multi-app/root-application.yml
+```
+
+Both examples use:
+
+- `prune: true` to remove resources no longer defined in Git
+- `selfHeal: true` to reconcile drift back to the Git state
+- `CreateNamespace=true` so Argo CD creates the destination namespace automatically
+- the Argo CD `Application` destination namespace as the single source of truth for where workloads are deployed
+
+When to use which:
+
+- use `mono application` when you want one Argo CD app per workload and prefer a simpler setup
+- use `multi-app` when you want one parent application to manage multiple child applications in a structured way
+
+### Mono and multi-app view in Argo CD
+
+The Argo CD UI below shows both declarative examples:
+
+- `nginx-mono` as the mono application example
+- `platform-root` as the parent app in the multi-app example
+- `nginx-multi` and `health-check-multi` as child applications managed by the multi-app pattern
+
+![Argo CD mono and multi-app overview](images/argocd-mono-multi-apps-overview.png)
