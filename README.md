@@ -227,6 +227,26 @@ Check application status:
 argocd app get solar-system-app-2
 ```
 
+Example with an `nginx` application using automatic sync, auto-pruning, and self-healing:
+
+```bash
+argocd app create nginx-auto-sync \
+  --repo https://github.com/imhashmi8/gitops-argocd-k8s-deployment.git \
+  --path nginx \
+  --revision main \
+  --dest-namespace nginx \
+  --dest-server https://kubernetes.default.svc \
+  --sync-policy automated \
+  --auto-prune \
+  --self-heal
+```
+
+This configuration means:
+
+- `--sync-policy automated`: Argo CD syncs changes from Git automatically
+- `--auto-prune`: resources removed from Git are also removed from the cluster
+- `--self-heal`: resources changed manually in the cluster are reconciled back to the Git state
+
 ## 13. Screenshots
 
 The screenshots are stored in the `images/` folder.
