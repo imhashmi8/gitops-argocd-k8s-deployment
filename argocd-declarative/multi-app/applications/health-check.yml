@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: health-check-multi
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/imhashmi8/gitops-argocd-k8s-deployment.git
+    targetRevision: main
+    path: argocd-declarative/multi-app/apps/health-check
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: health-check
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

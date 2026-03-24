@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-shapes
+  namespace: health-check
+spec:
+  selector:
+    matchLabels:
+      app: random-shapes
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: random-shapes
+    spec:
+      containers:
+      - name: random-shapes
+        image: hashmi111/php-random-shapes:v1
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: moving-shapes-colors

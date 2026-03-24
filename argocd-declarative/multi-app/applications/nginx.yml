@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-multi
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/imhashmi8/gitops-argocd-k8s-deployment.git
+    targetRevision: main
+    path: argocd-declarative/multi-app/apps/nginx
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
