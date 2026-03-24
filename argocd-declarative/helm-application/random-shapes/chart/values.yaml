@@ -1,0 +1,22 @@
+replicaCount: 2
+
+image:
+  repository: hashmi111/php-random-shapes:v1
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+color:
+  circle: navy
+  oval: teal
+  triangle: maroon
+  rectangle: olive
+  square: purple

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: random-shapes-declarative-chart
+description: A Helm chart for Random Shape App declarative Argo CD example
+version: 1.0.0

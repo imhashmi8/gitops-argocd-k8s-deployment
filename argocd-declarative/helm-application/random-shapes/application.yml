@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: random-shapes-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/imhashmi8/gitops-argocd-k8s-deployment.git
+    targetRevision: main
+    path: argocd-declarative/helm-application/random-shapes/chart
+    helm:
+      valueFiles:
+      - values.yaml
+      releaseName: random-shapes-declarative
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helm-declarative
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

@@ -259,6 +259,49 @@ This configuration means:
 - `--auto-prune`: resources removed from Git are also removed from the cluster
 - `--self-heal`: resources changed manually in the cluster are reconciled back to the Git state
 
+### Helm chart using the Argo CD CLI
+
+Argo CD can also deploy the Helm chart in this repository by pointing the application to the `helm-chart/` directory.
+
+Create the application:
+
+```bash
+argocd app create random-shapes-helm \
+  --repo https://github.com/imhashmi8/gitops-argocd-k8s-deployment.git \
+  --path helm-chart \
+  --revision main \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace helm-demo \
+  --sync-policy automated \
+  --auto-prune \
+  --self-heal \
+  --sync-option CreateNamespace=true
+```
+
+Sync and verify it:
+
+```bash
+argocd app sync random-shapes-helm
+argocd app get random-shapes-helm
+```
+
+This imperative Helm example uses:
+
+- `path: helm-chart` so Argo CD detects the Helm chart from `Chart.yaml`
+- `helm-demo` as the destination namespace
+- `CreateNamespace=true` so the namespace is created automatically
+- automated sync with pruning and self-healing
+
+### Helm chart imperative view in Argo CD
+
+Add the screenshot for the imperative Helm deployment at:
+
+- `images/argocd-helm-imperative-overview.png`
+
+```markdown
+![Argo CD Helm imperative overview](images/argocd-helm-imperative-overview.png)
+```
+
 ## 13. Declarative Argo CD examples
 
 This repository now shows two declarative Argo CD patterns under `argocd-declarative/`.
@@ -349,3 +392,49 @@ The Argo CD UI below shows both declarative examples:
 - `nginx-multi` and `health-check-multi` as child applications managed by the multi-app pattern
 
 ![Argo CD mono and multi-app overview](images/argocd-mono-multi-apps-overview.png)
+
+## 14. Declarative Helm example
+
+Argo CD can also deploy a Helm chart declaratively by using an Argo CD `Application` manifest that points to the chart directory in Git.
+
+Why this is useful:
+
+- it lets you keep Helm-based deployments in the same GitOps workflow as plain YAML applications
+- Argo CD renders the Helm chart and applies the generated Kubernetes manifests automatically
+- you still get automated sync, pruning, self-healing, and Git-based history
+
+This repository includes a separate declarative Helm example with its own chart, values file, and namespace so it stays independent from the imperative Helm example.
+
+Structure:
+
+- `argocd-declarative/helm-application/random-shapes/chart/`: the declarative Helm chart source
+- `argocd-declarative/helm-application/random-shapes/application.yml`: Argo CD `Application` for the Helm chart
+
+Key files:
+
+- [`argocd-declarative/helm-application/random-shapes/chart/Chart.yaml`](argocd-declarative/helm-application/random-shapes/chart/Chart.yaml)
+- [`argocd-declarative/helm-application/random-shapes/chart/values.yaml`](argocd-declarative/helm-application/random-shapes/chart/values.yaml)
+- [`argocd-declarative/helm-application/random-shapes/application.yml`](argocd-declarative/helm-application/random-shapes/application.yml)
+
+Apply it with:
+
+```bash
+kubectl apply -f argocd-declarative/helm-application/random-shapes/application.yml
+```
+
+This declarative example points Argo CD to:
+
+- `path: argocd-declarative/helm-application/random-shapes/chart` so Argo CD detects and renders the dedicated declarative Helm chart
+- `valueFiles: [values.yaml]` to use the chart values stored with this example
+- `releaseName: random-shapes-declarative` to give the Helm release a stable name
+- `namespace: helm-declarative` as the destination namespace
+
+### Helm chart declarative view in Argo CD
+
+Add the screenshot for the declarative Helm deployment at:
+
+- `images/argocd-helm-declarative-overview.png`
+
+```markdown
+![Argo CD Helm declarative overview](images/argocd-helm-declarative-overview.png)
+```
