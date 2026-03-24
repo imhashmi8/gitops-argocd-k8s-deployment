@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: random-shapes
-  namespace: health-check-multi
 spec:
   selector:
     matchLabels:
