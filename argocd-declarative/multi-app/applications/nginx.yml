@@ -11,7 +11,7 @@ spec:
     path: argocd-declarative/multi-app/apps/nginx
   destination:
     server: https://kubernetes.default.svc
-    namespace: nginx
+    namespace: nginx-multi
   syncPolicy:
     automated:
       prune: true

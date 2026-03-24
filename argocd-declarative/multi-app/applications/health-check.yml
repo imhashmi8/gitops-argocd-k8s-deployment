@@ -11,7 +11,7 @@ spec:
     path: argocd-declarative/multi-app/apps/health-check
   destination:
     server: https://kubernetes.default.svc
-    namespace: health-check
+    namespace: health-check-multi
   syncPolicy:
     automated:
       prune: true

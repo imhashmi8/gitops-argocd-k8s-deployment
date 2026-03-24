@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: moving-shapes-colors
-  namespace: health-check
+  namespace: health-check-multi
 data:
   BACKGROUND_COLOR: blue
   TEXT_COLOR: white
